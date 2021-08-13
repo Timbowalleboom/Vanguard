@@ -12,8 +12,6 @@ public class MatchManager : NetworkBehaviour
     public int matchMaxScore;
     [HideInInspector]public Text redScoreText, blueScoreText,winScreenText;
     bool restarting;
-
-
     public void NewPlayerConnected(GameObject player)
     {
         if (!isServer) return;
