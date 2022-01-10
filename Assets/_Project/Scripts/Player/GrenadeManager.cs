@@ -14,6 +14,13 @@ namespace Vanguard
     {
         public GameObject grenadePrefab;
         public Rigidbody playerRigdbody;
+        public GameObject grenadeThrowPoint;
+        private GrenadeArc grenadeArcScript;
+
+
+        delegate void GrenadeUpdate(Vector3 grenadeVelocity, Vector3 startPostion);
+        GrenadeUpdate grenadeUpdate;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -23,16 +30,34 @@ namespace Vanguard
             }
             else
             {
+                
                 InputManager.OnGrenadeStopped += GrenadeTriggerUp;
+                InputManager.OnGrenadeStarted += GrenadeTriggerDown;
+                grenadeArcScript = grenadeThrowPoint.GetComponent<GrenadeArc>();
             }
         }
 
 
         private void GrenadeTriggerUp()
         {
-            CmdThrowCommand(gameObject.transform.position + gameObject.transform.forward * 2, Camera.main.transform.rotation, playerRigdbody.velocity);
+            Debug.Log("Grenade trigger up");
+            grenadeUpdate -= grenadeArcScript.UpdateLineRenderer; // Will this cause an error if you somehow manage to trigger up without doing a trigger down?
+            CmdThrowCommand(grenadeThrowPoint.transform.position, Camera.main.transform.rotation, playerRigdbody.velocity);
 
         }
+
+        private void GrenadeTriggerDown() {
+            Debug.Log("Grenade trigger down");
+            grenadeUpdate += grenadeArcScript.UpdateLineRenderer; // will this cause it to add the function to the delegate multiple times?
+
+        }
+        // Update is called once per frame
+
+        void Update()
+        {
+            if (grenadeUpdate != null) { grenadeUpdate(playerRigdbody.velocity + grenadePrefab.GetComponent<Grenade>().nadeVelocity * Vector3.forward, grenadeThrowPoint.transform.position); }
+        }
+
 
         [Command]
         public void CmdThrowCommand(Vector3 Position, Quaternion Rotation, Vector3 playerVelocity)
