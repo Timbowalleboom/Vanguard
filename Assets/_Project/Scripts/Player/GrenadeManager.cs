@@ -42,6 +42,7 @@ namespace Vanguard
         {
             Debug.Log("Grenade trigger up");
             grenadeUpdate -= grenadeArcScript.UpdateLineRenderer; // Will this cause an error if you somehow manage to trigger up without doing a trigger down?
+            grenadeArcScript.StopLineRenderer();
             CmdThrowCommand(grenadeThrowPoint.transform.position, Camera.main.transform.rotation, playerRigdbody.velocity);
 
         }
@@ -55,7 +56,7 @@ namespace Vanguard
 
         void Update()
         {
-            if (grenadeUpdate != null) { grenadeUpdate(playerRigdbody.velocity + grenadePrefab.GetComponent<Grenade>().nadeVelocity * Vector3.forward, grenadeThrowPoint.transform.position); }
+            if (grenadeUpdate != null) { grenadeUpdate(playerRigdbody.velocity + Camera.main.transform.rotation*(grenadePrefab.GetComponent<Grenade>().nadeVelocity * Vector3.forward), grenadeThrowPoint.transform.position); }
         }
 
 
